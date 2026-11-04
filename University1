@@ -1,0 +1,31 @@
+CREATE TABLE Department
+(
+    Dept_ID INT PRIMARY KEY,
+    Dept_Name VARCHAR(50)
+);
+CREATE TABLE Student
+(
+    Roll_No INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Age INT,
+    Dept_ID INT,
+    FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID)
+);
+INSERT INTO Department VALUES
+(101, 'Computer Science'),
+(102, 'Mathematics'),
+(103, 'Physics');
+
+INSERT INTO Student VALUES
+(1, 'Ayan', 22, 101),
+(2, 'Rahul', 21, 102),
+(3, 'Aman', 23, 103);
+
+SELECT * FROM Department;
+
+SELECT * FROM Student;
+
+SELECT Student.Name, Department.Dept_Name
+FROM Student
+INNER JOIN Department
+ON Student.Dept_ID = Department.Dept_ID;
