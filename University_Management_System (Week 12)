@@ -1,0 +1,143 @@
+CREATE DATABASE UniversityDB;
+
+USE UniversityDB;
+CREATE TABLE University(
+    UID INT PRIMARY KEY,
+    UName VARCHAR(50),
+    City VARCHAR(30),
+    Location VARCHAR(50)
+);
+CREATE TABLE Department(
+    DID INT PRIMARY KEY,
+    DName VARCHAR(50),
+    UID INT,
+    HOD VARCHAR(50),
+    FOREIGN KEY(UID) REFERENCES University(UID)
+);
+
+CREATE TABLE Program(
+    PID INT PRIMARY KEY,
+    PName VARCHAR(50),
+    Duration INT,
+    DID INT,
+    FOREIGN KEY(DID) REFERENCES Department(DID)
+);
+CREATE TABLE Course(
+    CID INT PRIMARY KEY,
+    CName VARCHAR(50),
+    Credits INT,
+    PID INT,
+    FOREIGN KEY(PID) REFERENCES Program(PID)
+);
+CREATE TABLE Syllabus(
+    SID INT PRIMARY KEY,
+    Topic VARCHAR(50),
+    Semester INT,
+    CID INT,
+    FOREIGN KEY(CID) REFERENCES Course(CID)
+);
+CREATE TABLE Faculty(
+    FID INT PRIMARY KEY,
+    FName VARCHAR(50),
+    Specialization VARCHAR(50),
+    UID INT,
+    FOREIGN KEY(UID) REFERENCES University(UID)
+);
+INSERT INTO University VALUES
+(1,'AMU','Aligarh','UP'),
+(2,'JMI','Delhi','Jamia Nagar'),
+(3,'JNU','Delhi','New Delhi'),
+(4,'DU','Delhi','North Campus'),
+(5,'JU','Jammu','Jammu');
+
+INSERT INTO Department VALUES
+(1,'Computer Science',1,'Dr. Ali'),
+(2,'Mathematics',1,'Dr. Khan'),
+(3,'Computer Science',2,'Dr. Ahmed'),
+(4,'Physics',3,'Dr. Sharma'),
+(5,'Management',4,'Dr. Kumar');
+
+INSERT INTO Program VALUES
+(1,'MCA',2,1),
+(2,'BCA',3,1),
+(3,'MSc Mathematics',2,2),
+(4,'MCA',2,3),
+(5,'MBA',2,5);
+
+INSERT INTO Course VALUES
+(1,'Computer Architecture',4,1),
+(2,'DBMS',4,1),
+(3,'Programming',3,2),
+(4,'Real Analysis',4,3),
+(5,'Data Structures',4,4);
+
+INSERT INTO Syllabus VALUES
+(1,'Number Systems',1,1),
+(2,'Normalization',2,2),
+(3,'C Programming',1,3),
+(4,'Sequences',2,4),
+(5,'Linked Lists',1,5);
+
+INSERT INTO Faculty VALUES
+(1,'Amit','Information Security',1),
+(2,'Rahul','Data Science',2),
+(3,'Sara','Information Security',3),
+(4,'Neha','Mathematics',4),
+(5,'Arun','Database Systems',5);
+
+
+CREATE INDEX idx_city ON University(City);
+
+CREATE INDEX idx_dname ON Department(DName);
+
+CREATE INDEX idx_pname ON Program(PName);
+
+CREATE INDEX idx_cname ON Course(CName);
+
+CREATE INDEX idx_topic ON Syllabus(Topic);
+
+CREATE INDEX idx_specialization ON Faculty(Specialization);
+
+SELECT * FROM University
+WHERE City='Delhi';
+
+SELECT DName
+FROM Department
+WHERE UID=1;
+
+SELECT Location
+FROM University
+WHERE UName='JNU';
+
+SELECT P.PName
+FROM Program P
+JOIN Department D ON P.DID=D.DID
+JOIN University U ON D.UID=U.UID
+WHERE U.UName='JU';
+
+SELECT DISTINCT U.UName
+FROM University U
+JOIN Department D ON U.UID=D.UID
+JOIN Program P ON D.DID=P.DID
+WHERE P.PName='MCA';
+
+SELECT C.CName
+FROM Course C
+JOIN Program P ON C.PID=P.PID
+JOIN Department D ON P.DID=D.DID
+JOIN University U ON D.UID=U.UID
+WHERE P.PName='MCA'
+AND U.UName='AMU';
+
+SELECT F.FName,U.UName
+FROM Faculty F
+JOIN University U ON F.UID=U.UID
+WHERE F.Specialization='Information Security';
+
+SELECT U.UName,S.Topic
+FROM Syllabus S
+JOIN Course C ON S.CID=C.CID
+JOIN Program P ON C.PID=P.PID
+JOIN Department D ON P.DID=D.DID
+JOIN University U ON D.UID=U.UID
+WHERE C.CName='Computer Architecture';
